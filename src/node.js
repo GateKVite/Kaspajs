@@ -49,7 +49,7 @@ module.exports = class Node extends EventEmitter {
       request.resolve(data[data.payload])
     })
 
-    readyCallback()
+    if (typeof readyCallback === 'function') readyCallback()
   }
 
   request (method, data) {
