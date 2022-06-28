@@ -41,9 +41,9 @@ module.exports = class Node extends EventEmitter {
       if (!this.waitingRequests.find(request => request.name === data.payload.replace('Response', 'Request'))) return
 
       const request = this.waitingRequests.find(request => request.name === data.payload.replace('Response', 'Request'))
-      // TODO: Delete from array
+      this.waitingRequests = this.waitingRequests.filter(req => req !== request)
       
-      if (data[data.payload].error) reject(data[data.payload].error)
+      if (data[data.payload].error) request.reject(data[data.payload].error)
       delete data[data.payload].error
 
       request.resolve(data[data.payload])
