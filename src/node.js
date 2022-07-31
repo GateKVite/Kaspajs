@@ -25,6 +25,7 @@ module.exports = class Node extends EventEmitter {
     this.subscriptions = new Map()
 
     this._stream = this._client.MessageStream()
+
     this._stream.on('data', (data) =>  {
       if (!data.payload) return
 
@@ -47,6 +48,15 @@ module.exports = class Node extends EventEmitter {
       delete data[data.payload].error
 
       request.resolve(data[data.payload])
+    })
+
+    this._stream.on('error', (err) => {
+      this.emit('error', err)
+      this.emit('end')
+    })
+
+    this._stream.on('end', () => {
+      this.emit('end')
     })
 
     if (typeof readyCallback === 'function') readyCallback()
