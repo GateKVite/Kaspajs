@@ -25,7 +25,32 @@ module.exports = class Node extends EventEmitter {
     this.subscriptions = new Map()
 
     this._stream = this._client.MessageStream()
+    this._updateStream()
 
+    this.on('end', () => {
+      delete this._client
+      delete this._stream
+
+      this._client = new RPC(nodeAddress, gRPC.credentials.createInsecure(), {  
+        "grpc.max_receive_message_length": -1
+      })
+
+      this._stream = this._client.MessageStream()
+      this._updateStream()
+
+      this.subscriptions.forEach((eventName, registeredEvents) => {
+        const method = 'notify' + eventName[0].toUpperCase() + eventName.replace('Notification', 'Request')
+
+        registeredEvents.forEach(event => {
+          this._stream.write({ [ method ]: event.data })
+        })
+      })
+    })
+
+    if (typeof readyCallback === 'function') readyCallback()
+  }
+
+  _updateStream () {
     this._stream.on('data', (data) =>  {
       if (!data.payload) return
 
@@ -58,8 +83,6 @@ module.exports = class Node extends EventEmitter {
     this._stream.on('end', () => {
       this.emit('end')
     })
-
-    if (typeof readyCallback === 'function') readyCallback()
   }
 
   request (method, data) {
@@ -81,7 +104,7 @@ module.exports = class Node extends EventEmitter {
 		eventName = eventName[0].toLowerCase() + eventName.substr(1)
 
     const subsCache = this.subscriptions.get(eventName) ?? []
-    subsCache.push({ uid: (Math.random() * 10000).toFixed(0), callback })
+    subsCache.push({ uid: (Math.random() * 10000).toFixed(0), data, callback })
     this.subscriptions.set(eventName, subsCache)
     
     this._stream.write({ [ method ]: data })
