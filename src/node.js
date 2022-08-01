@@ -38,13 +38,15 @@ module.exports = class Node extends EventEmitter {
       this._stream = this._client.MessageStream()
       this._updateStream()
 
-      this.subscriptions.forEach((eventName, registeredEvents) => {
+      this.subscriptions.forEach((registeredEvents, eventName) => {
         const method = 'notify' + eventName[0].toUpperCase() + eventName.replace('Notification', 'Request')
 
         registeredEvents.forEach(event => {
           this._stream.write({ [ method ]: event.data })
         })
       })
+
+      this.emit('reconnect')
     })
 
     if (typeof readyCallback === 'function') readyCallback()
@@ -76,7 +78,7 @@ module.exports = class Node extends EventEmitter {
     })
 
     this._stream.on('error', (err) => {
-      this.emit('error', err)
+      this.emit('err', err)
       this.emit('end')
     })
 
