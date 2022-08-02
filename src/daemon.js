@@ -27,7 +27,9 @@ module.exports = class Daemon extends EventEmitter {
     this._stream = this._client.MessageStream()
     this._updateStream()
 
-    this.on('end', () => {
+    this.on('end', async () => {
+      await new Promise(resolve => { setTimeout(() => resolve(), 2000) })
+
       delete this._client
       delete this._stream
 
@@ -49,7 +51,7 @@ module.exports = class Daemon extends EventEmitter {
       this.emit('reconnect')
     })
 
-    if (typeof readyCallback === 'function') readyCallback()
+    if (typeof readyCallback === 'function') process.nextTick(() => readyCallback())
   }
 
   _updateStream () {
