@@ -1,6 +1,26 @@
 {
   "name": "kaspajs",
-  "version": "1.0.2",
+  "version": "2.0.0",
+  "description": "Simple Kaspa library for interacting with KaspaD & KaspawalletD gRPC",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GateKVite/Kaspajs.git"
+  },
+  "keywords": [
+    "kaspa",
+    "kaspajs",
+    "cryptocurrency"
+  ],
+  "author": "KaffinPX",
+  "license": "GPL-2.0",
+  "bugs": {
+    "url": "https://github.com/GateKVite/Kaspajs/issues"
+  },
+  "homepage": "https://github.com/GateKVite/Kaspajs#readme",
   "dependencies": {
     "@grpc/grpc-js": "^1.6.7",
     "@grpc/proto-loader": "^0.6.13"
