@@ -22,7 +22,17 @@ module.exports = class walletDaemon extends EventEmitter {
       "grpc.max_receive_message_length": -1
     })
 
-    readyCallback()
+    process.nextTick(() => readyCallback())
+  }
+
+  getAddresses () {
+    return new Promise((resolve, reject) => {
+      this._client.ShowAddresses({}, (err, data) => {
+        if (err !== null) reject(err)
+
+        resolve(data.address)
+      })
+    })
   }
 
   checkAddress (address) {
