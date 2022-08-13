@@ -12,8 +12,7 @@ module.exports = class walletDaemon extends EventEmitter {
       longs: String,
       enums: String,
       defaults: true,
-      oneofs: true,
-      longsAsStrings: false
+      oneofs: true
     })
 
 		const { kaspawalletd } = gRPC.loadPackageDefinition(packageDefinition).kaspawalletd
