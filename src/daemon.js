@@ -25,7 +25,7 @@ module.exports = class Daemon extends EventEmitter {
     this.subscriptions = new Map()
 
     this._stream = this._client.MessageStream()
-    this._updateStream()
+    this._subscribeStream()
 
     this.on('end', async () => {
       await new Promise(resolve => { setTimeout(() => resolve(), 2000) })
@@ -40,7 +40,7 @@ module.exports = class Daemon extends EventEmitter {
       })
 
       this._stream = this._client.MessageStream()
-      this._updateStream()
+      this._subscribeStream()
 
       this.subscriptions.forEach((registeredEvents, eventName) => {
         const method = 'notify' + eventName[0].toUpperCase() + eventName.replace('Notification', 'Request')
@@ -56,7 +56,7 @@ module.exports = class Daemon extends EventEmitter {
     if (typeof readyCallback === 'function') process.nextTick(() => readyCallback())
   }
 
-  _updateStream () {
+  _subscribeStream () {
     this._stream.on('data', (data) =>  {
       if (!data.payload) return
 
