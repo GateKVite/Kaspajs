@@ -30,6 +30,8 @@ module.exports = class Daemon extends EventEmitter {
     this.on('end', async () => {
       await new Promise(resolve => { setTimeout(() => resolve(), 2000) })
 
+      gRPC.closeClient(this._client)
+      
       delete this._client
       delete this._stream
 
