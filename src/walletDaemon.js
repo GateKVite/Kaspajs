@@ -3,7 +3,7 @@ const gRPC = require('@grpc/grpc-js')
 
 const { EventEmitter } = require('events')
 
-module.exports = class walletDaemon extends EventEmitter {
+module.exports = class walletNode extends EventEmitter {
   constructor (nodeAddress, readyCallback) {
     super()
 
@@ -22,16 +22,6 @@ module.exports = class walletDaemon extends EventEmitter {
     })
 
     process.nextTick(() => readyCallback())
-  }
-
-  getAddresses () {
-    return new Promise((resolve, reject) => {
-      this._client.ShowAddresses({}, (err, data) => {
-        if (err !== null) reject(err)
-
-        resolve(data.address)
-      })
-    })
   }
 
   checkAddress (address) {

@@ -1,7 +1,7 @@
 {
   "name": "kaspajs",
-  "version": "2.0.1",
-  "description": "Simple Kaspa library for interacting with KaspaD & KaspawalletD gRPC",
+  "version": "2.0.3",
+  "description": "Simple Kaspa library for interacting with Kaspad & Kaspawalletd gRPC",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

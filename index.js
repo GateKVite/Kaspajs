@@ -1,4 +1,4 @@
 const Daemon = require('./src/daemon')
-const WalletDaemon = require('./src/walletDaemon')
+const walletDaemon = require('./src/walletDaemon')
 
-module.exports = { Daemon, WalletDaemon }
+module.exports = { Daemon, walletDaemon }

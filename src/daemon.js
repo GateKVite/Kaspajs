@@ -3,7 +3,7 @@ const gRPC = require('@grpc/grpc-js')
 
 const { EventEmitter } = require('events')
 
-module.exports = class Daemon extends EventEmitter {
+module.exports = class Node extends EventEmitter {
   constructor (nodeAddress, readyCallback) {
     super()
 
@@ -25,38 +25,7 @@ module.exports = class Daemon extends EventEmitter {
     this.subscriptions = new Map()
 
     this._stream = this._client.MessageStream()
-    this._subscribeStream()
 
-    this.on('end', async () => {
-      await new Promise(resolve => { setTimeout(() => resolve(), 2000) })
-
-      gRPC.closeClient(this._client)
-      
-      delete this._client
-      delete this._stream
-
-      this._client = new RPC(nodeAddress, gRPC.credentials.createInsecure(), {  
-        "grpc.max_receive_message_length": -1
-      })
-
-      this._stream = this._client.MessageStream()
-      this._subscribeStream()
-
-      this.subscriptions.forEach((registeredEvents, eventName) => {
-        const method = 'notify' + eventName[0].toUpperCase() + eventName.replace('Notification', 'Request')
-
-        registeredEvents.forEach(event => {
-          this._stream.write({ [ method ]: event.data })
-        })
-      })
-
-      this.emit('reconnect')
-    })
-
-    if (typeof readyCallback === 'function') process.nextTick(() => readyCallback())
-  }
-
-  _subscribeStream () {
     this._stream.on('data', (data) =>  {
       if (!data.payload) return
 
@@ -82,13 +51,15 @@ module.exports = class Daemon extends EventEmitter {
     })
 
     this._stream.on('error', (err) => {
-      this.emit('err', err)
+      this.emit('error', err)
       this.emit('end')
     })
 
     this._stream.on('end', () => {
       this.emit('end')
     })
+
+    if (typeof readyCallback === 'function') process.nextTick(() => readyCallback())
   }
 
   request (method, data) {
@@ -110,7 +81,7 @@ module.exports = class Daemon extends EventEmitter {
 		eventName = eventName[0].toLowerCase() + eventName.substr(1)
 
     const subsCache = this.subscriptions.get(eventName) ?? []
-    subsCache.push({ uid: (Math.random() * 10000).toFixed(0), data, callback })
+    subsCache.push({ uid: (Math.random() * 10000).toFixed(0), callback })
     this.subscriptions.set(eventName, subsCache)
     
     this._stream.write({ [ method ]: data })
