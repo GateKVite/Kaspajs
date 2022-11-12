@@ -24,6 +24,16 @@ module.exports = class walletNode extends EventEmitter {
     process.nextTick(() => readyCallback())
   }
 
+  getAddresses () {
+    return new Promise((resolve, reject) => {
+      this._client.ShowAddresses({}, (err, data) => {
+        if (err !== null) reject(err)
+
+        resolve(data.address)
+      })
+    })
+  }
+
   checkAddress (address) {
     return new Promise((resolve, reject) => {
       this._client.CheckIfAddressIsValid({ address }, (err, data) => {
