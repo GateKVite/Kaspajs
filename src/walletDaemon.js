@@ -27,7 +27,7 @@ module.exports = class walletNode extends EventEmitter {
   getAddresses () {
     return new Promise((resolve, reject) => {
       this._client.ShowAddresses({}, (err, data) => {
-        if (err !== null) reject(err)
+        if (err !== null) return reject(err)
 
         resolve(data.address)
       })
@@ -37,7 +37,7 @@ module.exports = class walletNode extends EventEmitter {
   checkAddress (address) {
     return new Promise((resolve, reject) => {
       this._client.CheckIfAddressIsValid({ address }, (err, data) => {
-        if (err !== null) reject(err)
+        if (err !== null) return reject(err)
 
         resolve(data.isValid)
       })
@@ -47,7 +47,7 @@ module.exports = class walletNode extends EventEmitter {
   createAddress () {
     return new Promise((resolve, reject) => {
       this._client.NewAddress({}, (err, data) => {
-        if (err !== null) reject(err)
+        if (err !== null) return reject(err)
 
         resolve(data.address)
       })
@@ -57,7 +57,7 @@ module.exports = class walletNode extends EventEmitter {
   send (recipient, amount, password) {
     return new Promise((resolve, reject) => {
       this._client.Send({ toAddress: recipient, amount, password, from: [] }, (err, data) => {
-        if (err !== null) reject(err)
+        if (err !== null) return reject(err)
 
         resolve(data.txIDs)
       })
@@ -67,7 +67,7 @@ module.exports = class walletNode extends EventEmitter {
   sendFrom (sender, recipient, amount, password) {
     return new Promise((resolve, reject) => {
       this._client.Send({ toAddress: recipient, amount, password, from: [ sender ] }, (err, data) => {
-        if (err !== null) reject(err)
+        if (err !== null) return reject(err)
 
         resolve(data.txIDs)
       })
